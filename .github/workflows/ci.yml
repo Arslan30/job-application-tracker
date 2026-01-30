@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests
+      run: |
+        python -m pytest tests/ -v
+    
+    - name: Check imports
+      run: |
+        python -c "import tracker; import database; import classifier; import graph_client; import deduplicator"
+```
+
+---
+
+### `data/.gitkeep`
+```
+# Keep this directory
+```
+
+---
+
+### `state/.gitkeep`
+```
+# Keep this directory
+```
+
+---
+
+### `logs/.gitkeep`
+```
+# Keep this directory

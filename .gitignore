@@ -60,3 +60,11 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+data/*
+!data/.gitkeep
+
+*.db
+*.sqlite
+*.sqlite3
+*.xlsx

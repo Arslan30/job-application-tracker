@@ -1,0 +1,57 @@
+{
+    "manifest_version": 3,
+    "name": "Job Application Tracker",
+    "version": "1.0.0",
+    "description": "Track job applications from LinkedIn, Indeed, StepStone, XING and other sites",
+    "permissions": [
+      "storage",
+      "contextMenus",
+      "activeTab"
+    ],
+    "host_permissions": [
+      "https://www.linkedin.com/*",
+      "https://de.linkedin.com/*",
+      "https://www.indeed.com/*",
+      "https://de.indeed.com/*",
+      "https://www.stepstone.de/*",
+      "https://www.xing.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+      }
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://www.linkedin.com/*", "https://de.linkedin.com/*"],
+        "js": ["content/linkedin.js"],
+        "run_at": "document_idle"
+      },
+      {
+        "matches": ["https://www.indeed.com/*", "https://de.indeed.com/*"],
+        "js": ["content/indeed.js"],
+        "run_at": "document_idle"
+      },
+      {
+        "matches": ["https://www.stepstone.de/*"],
+        "js": ["content/stepstone.js"],
+        "run_at": "document_idle"
+      },
+      {
+        "matches": ["https://www.xing.com/*"],
+        "js": ["content/xing.js"],
+        "run_at": "document_idle"
+      }
+    ],
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }

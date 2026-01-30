@@ -41,7 +41,7 @@ GRAPH_AUTHORITY = "https://login.microsoftonline.com/consumers"
 GRAPH_ENDPOINT = "https://graph.microsoft.com/v1.0"
 
 # Azure App Registration (user must fill these)
-CLIENT_ID = os.getenv("AZURE_CLIENT_ID", "YOUR_CLIENT_ID_HERE")
+CLIENT_ID = os.getenv("AZURE_CLIENT_ID", "eac4cec2-87db-491c-929d-ad8631f090ee")
 
 # Email processing
 DEFAULT_SYNC_DAYS = 30

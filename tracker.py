@@ -164,7 +164,7 @@ def cmd_init(args):
     """Initialize database"""
     logger.info("Initializing database...")
     database.init_database()
-    print("✓ Database initialized successfully")
+    print("[OK] Database initialized successfully")
     print(f"  Location: {Path('data/applications.db').absolute()}")
 
 
@@ -181,18 +181,18 @@ def cmd_sync(args):
     # Get user info
     try:
         user = client.get_user_info()
-        print(f"✓ Authenticated as: {user.get('userPrincipalName')}")
+        print(f"[OK] Authenticated as: {user.get('userPrincipalName')}")
     except Exception as e:
-        print(f"✗ Authentication failed: {e}")
+        print(f"[ERROR] Authentication failed: {e}")
         logger.error(f"Authentication failed: {e}")
         return
     
     # Fetch messages
     try:
         messages = client.get_messages(since_days=args.since_days)
-        print(f"✓ Fetched {len(messages)} messages")
+        print(f"[OK] Fetched {len(messages)} messages")
     except Exception as e:
-        print(f"✗ Failed to fetch messages: {e}")
+        print(f"[ERROR] Failed to fetch messages: {e}")
         logger.error(f"Failed to fetch messages: {e}")
         return
     
@@ -210,7 +210,7 @@ def cmd_sync(args):
             logger.error(f"Error processing email {email.get('id')}: {e}")
             skipped_count += 1
     
-    print(f"\n✓ Sync complete:")
+    print(f"\n[OK] Sync complete:")
     print(f"  Processed: {processed_count} emails")
     print(f"  Skipped: {skipped_count} emails")
 
@@ -223,7 +223,7 @@ def cmd_import(args):
     
     file_path = Path(args.file)
     if not file_path.exists():
-        print(f"✗ File not found: {args.file}")
+        print(f"[ERROR] File not found: {args.file}")
         return
     
     imported_count = 0
@@ -235,24 +235,24 @@ def cmd_import(args):
                 reader = csv.DictReader(f)
                 entries = list(reader)
         except Exception as e:
-            print(f"✗ Error reading CSV file: {e}")
+            print(f"[ERROR] Error reading CSV file: {e}")
             return
     elif file_path.suffix.lower() == '.json':
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 entries = json.load(f)
         except Exception as e:
-            print(f"✗ Error reading JSON file: {e}")
+            print(f"[ERROR] Error reading JSON file: {e}")
             return
     else:
-        print(f"✗ Unsupported file format: {file_path.suffix}")
+        print(f"[ERROR] Unsupported file format: {file_path.suffix}")
         return
     
     if not entries:
-        print(f"✗ No entries found in file")
+        print(f"[ERROR] No entries found in file")
         return
     
-    print(f"✓ Loaded {len(entries)} entries from file")
+    print(f"[OK] Loaded {len(entries)} entries from file")
     
     for entry in entries:
         try:
@@ -323,7 +323,7 @@ def cmd_import(args):
         except Exception as e:
             logger.error(f"Error importing entry: {e}")
     
-    print(f"\n✓ Import complete:")
+    print(f"\n[OK] Import complete:")
     print(f"  Imported: {imported_count} new applications")
 
 
@@ -332,7 +332,7 @@ def cmd_export(args):
     logger.info(f"Exporting to {args.format}...")
     
     if args.format != 'xlsx':
-        print(f"✗ Only xlsx format is currently supported")
+        print(f"[ERROR] Only xlsx format is currently supported")
         return
     
     # Get data
@@ -340,7 +340,7 @@ def cmd_export(args):
     events = database.get_all_events()
     
     if not applications:
-        print("✗ No applications to export")
+        print("[ERROR] No applications to export")
         return
     
     # Create workbook
@@ -401,7 +401,7 @@ def cmd_export(args):
     output_path.parent.mkdir(exist_ok=True)
     wb.save(output_path)
     
-    print(f"✓ Exported to: {output_path.absolute()}")
+    print(f"[OK] Exported to: {output_path.absolute()}")
     print(f"  Applications: {len(applications)}")
     print(f"  Events: {len(events)}")
 

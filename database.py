@@ -167,7 +167,6 @@ def insert_application(
     finally:
         conn.close()
 
-
 def update_application(
     application_id: str,
     status: Optional[str] = None,
@@ -177,7 +176,8 @@ def update_application(
     location: Optional[str] = None,
     job_url: Optional[str] = None,
     email_evidence: Optional[str] = None,
-    notes: Optional[str] = None
+    notes: Optional[str] = None,
+    next_follow_up_date: Optional[str] = None
 ) -> bool:
     """
     Update existing application
@@ -217,6 +217,9 @@ def update_application(
         if notes is not None:
             updates.append("notes = ?")
             params.append(notes)
+        if next_follow_up_date is not None:
+            updates.append("next_follow_up_date = ?")
+            params.append(next_follow_up_date)
         
         if not updates:
             return False

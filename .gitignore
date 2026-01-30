@@ -61,9 +61,22 @@ Thumbs.db
 htmlcov/
 .pytest_cache/
 
+# Application data (never commit)
 data/*
 !data/.gitkeep
 
+# State and cache (never commit)
+state/*
+!state/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Exports (except template)
+exports/*
+!exports/.gitkeep
+!exports/manual_capture_template.csv
+
+# Safety net (ignore these anywhere)
 *.db
 *.sqlite
 *.sqlite3

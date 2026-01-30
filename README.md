@@ -56,142 +56,107 @@ cd job-application-tracker
 ```
 
 ### 2. Create Virtual Environment
+
+```bash
 python -m venv venv
 venv\Scripts\activate
-3. Install Dependencies
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-Includes:
+```
 
-msal
+Includes: `msal`, `requests`, `openpyxl`, `python-dateutil`, `streamlit`.
 
-requests
+### 4. Azure App Registration (Microsoft Graph)
 
-openpyxl
-
-python-dateutil
-
-streamlit
-
-4. Azure App Registration (Microsoft Graph)
 Required to read Outlook emails.
 
-Go to https://portal.azure.com
+1. Go to [Azure Portal](https://portal.azure.com)
+2. **Azure Active Directory** → **App registrations** → **New registration**
+3. **Settings:**
+   - Name: `Job Application Tracker`
+   - Supported account types: **Personal Microsoft accounts only**
+   - Redirect URI: Leave empty (device code flow)
+4. Copy **Application (client) ID**
+5. **API permissions:** Microsoft Graph → Delegated → `Mail.Read`, `User.Read`
+6. **Authentication** → Advanced settings → Enable **Allow public client flows** → Save
 
-Azure Active Directory → App registrations → New registration
+### 5. Configure Client ID
 
-Settings
+**Option A (recommended):** Environment variable
 
-Name: Job Application Tracker
-
-Supported account types: Personal Microsoft accounts only
-
-Redirect URI: Leave empty (device code flow)
-
-Copy Application (client) ID
-
-API permissions:
-
-Microsoft Graph → Delegated
-
-Mail.Read
-
-User.Read
-
-Authentication → Advanced settings
-Enable Allow public client flows → Save
-
-5. Configure Client ID
-Option A (Recommended): Environment Variable
+```bash
 set AZURE_CLIENT_ID=your-client-id-here
-Option B: Edit config.py (local only)
+```
+
+**Option B:** Edit `config.py` (local only)
+
+```python
 CLIENT_ID = "your-client-id-here"
+```
+
 Never commit your real Client ID.
 
-6. Initialize Database
-python tracker.py init
-Creates:
+### 6. Initialize Database
 
-data/applications.db
-7. First Email Sync (CLI)
+```bash
+python tracker.py init
+```
+
+Creates: `data/applications.db`
+
+### 7. First Email Sync (CLI)
+
+```bash
 python tracker.py sync --since-days 30
+```
+
 First run:
 
-A login URL and code are shown
+- A login URL and code are shown
+- Open the URL, enter the code
+- Sign in and grant permissions
+- Sync continues automatically
+- Tokens are cached locally in `state/` (gitignored)
 
-Open the URL, enter the code
+### 8. Streamlit UI (recommended daily use)
 
-Sign in and grant permissions
+**Start UI (Windows):** run `run_ui.bat` or manually:
 
-Sync continues automatically
-
-Tokens are cached locally in state/ (gitignored).
-
-Streamlit UI (Recommended Daily Use)
-Start UI (Windows-safe)
-run_ui.bat
-Or manually:
-
+```bash
 venv\Scripts\python -m streamlit run ui.py
-UI runs at:
+```
 
-http://127.0.0.1:8501
-From the UI you can:
-View all applications
+UI runs at: **http://127.0.0.1:8501**
 
-Edit status, notes, follow-up date
+From the UI you can: view all applications, edit status/notes/follow-up date, trigger email sync, export to Excel.
 
-Trigger email sync
+### 9. Browser Extension Setup (Chrome / Edge)
 
-Export to Excel
+1. Open **Chrome:** `chrome://extensions/` or **Edge:** `edge://extensions/`
+2. Enable **Developer mode**
+3. Click **Load unpacked**
+4. Select the `extension/` folder
 
-Browser Extension Setup
-Chrome / Edge
-Open:
+---
 
-Chrome: chrome://extensions/
+## Typical Workflow
 
-Edge: edge://extensions/
+**When you apply for a job:**
 
-Enable Developer mode
+- **Automatic (email-based):** Apply normally → confirmation email arrives → run email sync (UI or CLI) → application is created automatically.
+- **Manual:** Open job posting → click extension → review/fill fields → export CSV → import into tracker.
 
-Click Load unpacked
+**Regular / weekly tasks:** Review applications in UI, update statuses after interviews, add notes, set follow-up dates, export Excel for backup/reporting.
 
-Select the extension/ folder
+---
 
-Typical Workflow
-When you apply for a job
-Automatic (email-based)
+## CLI Commands
 
-Apply normally
-
-Confirmation email arrives
-
-Run email sync (UI or CLI)
-
-Application is created automatically
-
-Manual
-
-Open job posting
-
-Click extension
-
-Review / fill fields
-
-Export CSV → import into tracker
-
-Regular / Weekly Tasks
-Review applications in UI
-
-Update statuses after interviews
-
-Add notes
-
-Set follow-up dates
-
-Export Excel for backup/reporting
-
-CLI Commands
+```bash
 # Initialize database
 python tracker.py init
 
@@ -206,73 +171,36 @@ python tracker.py import --file exports/manual_capture.csv
 
 # Export to Excel
 python tracker.py export --format xlsx
-Data Model
-Applications Table
-application_id
+```
 
-company
+---
 
-role_title
+## Data Model
 
-location
+**Applications table:** `application_id`, `company`, `role_title`, `location`, `job_url`, `status`, `status_confidence`, `applied_date`, `source`, `notes`, `next_follow_up_date`
 
-job_url
+**Events table:** `event_id`, `application_id`, `event_type`, `event_date`, `evidence_source`, `evidence_text`
 
-status
+---
 
-status_confidence
+## Deduplication Logic
 
-applied_date
+- Exact job URL match, or same company + role within a configurable time window.
+- **Rules:** Existing data is preserved; missing fields are filled; notes are appended; events are always added.
 
-source
+---
 
-notes
+## Troubleshooting
 
-next_follow_up_date
+- **Email sync fails:** Ensure UI is started via `venv\Scripts\python`; delete `state/` token cache and re-authenticate if needed.
+- **Unicode errors on Windows:** Project uses ASCII-only console output.
+- **UI package errors:** Subprocesses use `sys.executable`; launch UI via `run_ui.bat` when possible.
 
-Events Table
-event_id
+---
 
-application_id
+## Project Structure
 
-event_type
-
-event_date
-
-evidence_source
-
-evidence_text
-
-Deduplication Logic
-Exact job URL match
-
-Same company + role within configurable time window
-
-Rules:
-
-Existing data is preserved
-
-Missing fields are filled
-
-Notes are appended
-
-Events are always added
-
-Troubleshooting
-Email sync fails
-Ensure UI is started via venv\Scripts\python
-
-Delete state/ token cache and re-authenticate if needed
-
-Unicode errors on Windows
-Fixed: project uses ASCII-only console output
-
-UI package errors
-Ensure subprocesses use sys.executable
-
-Always launch UI via run_ui.bat
-
-Project Structure
+```
 job-application-tracker/
 ├── tracker.py        # CLI
 ├── ui.py             # Streamlit UI
@@ -287,20 +215,16 @@ job-application-tracker/
 ├── state/            # Token cache (gitignored)
 ├── exports/
 └── tests/
-Security Notes
-The following are never committed (enforced by .gitignore):
+```
 
-state/* (auth tokens)
+---
 
-data/*.db
+## Security Notes
 
-data/*.xlsx
+The following are never committed (enforced by `.gitignore`): `state/*` (auth tokens), `data/*.db`, `data/*.xlsx`, real exports, `venv/`. All personal data remains local.
 
-real exports
+---
 
-venv/
+## License
 
-All personal data remains local.
-
-License
 MIT License — free to use and modify for your own job search.

@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Application data
+data/*.xlsx
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# State and cache
+state/*
+!state/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Exports (except template)
+exports/*
+!exports/.gitkeep
+!exports/manual_capture_template.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/

@@ -53,7 +53,9 @@ All data stays on your machine. No server, no cloud backend.
 ```bash
 git clone https://github.com/YOUR_USERNAME/job-application-tracker.git
 cd job-application-tracker
-2. Create Virtual Environment
+```
+
+### 2. Create Virtual Environment
 python -m venv venv
 venv\Scripts\activate
 3. Install Dependencies
